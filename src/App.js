@@ -59,6 +59,7 @@ function App () {
       .finally(() => setLoading(false))
   }, [])
   useEffect(() => {
+    setPage(0)
     if (searchStr !== '') {
       const searchResult = items.filter((item) => {
         const title = item.title.toLowerCase()
@@ -86,7 +87,9 @@ function App () {
         <NavBar>
           {[...Array(nPages).keys()].map((_, i) => {
             const isActive = i === page
-            const className = isActive && 'active'
+            const className = isActive
+              ? 'active'
+              : null
             const display = i + 1
             return (
               <li
