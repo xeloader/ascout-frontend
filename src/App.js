@@ -27,6 +27,13 @@ const Content = styled.main`
   margin: 0 auto;
 `
 
+const UpdatedAt = styled.p`
+  margin: 0;
+  color: gray;
+  font-size: x-small;
+  margin-bottom: 1rem;
+`
+
 const NavBar = styled.ul`
   display: flex;
   flex-direction: row;
@@ -90,6 +97,7 @@ const Header = styled.header`
 function App () {
   const [items, setItems] = useState([])
   const [searchItems, setSearchItems] = useState()
+  const [updatedAt, setUpdatedAt] = useState()
   const [page, setPage] = useState(0)
   const [loading, setLoading] = useState()
   const [perPage, setPerPage] = useState(50)
@@ -128,7 +136,11 @@ function App () {
   useEffect(() => {
     setLoading(true)
     axios.get('/assets/latest.json')
-      .then((res) => setItems(res.data))
+      .then((res) => {
+        const { items = [], updatedAt } = res.data
+        setUpdatedAt(updatedAt)
+        setItems(items)
+      })
       .finally(() => setLoading(false))
   }, [])
   useEffect(() => {
@@ -148,6 +160,7 @@ function App () {
       <Header>
         <h1>ASCOUT</h1>
         <Subtitle>Search engine for konkursauktioner</Subtitle>
+        <UpdatedAt>Last update: {updatedAt}</UpdatedAt>
       </Header>
       <NavWrapper>
         <input placeholder='vad letar du efter?' onChange={handleSearch} />
