@@ -10,10 +10,20 @@ const Fill = styled.div`
   border: 5px solid black;
   align-items: center;
 `
+const CropSquare = styled.div`
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%;
+  overflow: hidden;
+  background-position: center center;
+  background-size: cover;
+  background-image: url('${props => props.src}');
+`
 
-const Thumbnail = styled.img`
-  max-width: 256px;
-  height: auto;
+const Content = styled.main`
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
 `
 
 const NavBar = styled.ul`
@@ -22,6 +32,7 @@ const NavBar = styled.ul`
   flex-wrap: wrap;
   list-style: none;
   padding: 0;
+  justify-content: center;
 
   & > li {
     padding: 0.5rem;
@@ -34,7 +45,44 @@ const NavBar = styled.ul`
   }
 `
 
+const Grid = styled.div`
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-column-gap: 1rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  @media (max-width: 480px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+`
+
+const Link = styled.a``
+
+const Description = styled.p`
+  width: 100%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-align: left;
+  background-color: white;
+  margin: 0;
+`
+
+const GridItem = styled.div`
+  overflow: hidden;
+  position: relative;
+`
+
 const NavWrapper = styled.nav`
+  text-align: center;
+`
+
+const Subtitle = styled.p`
+  color: gray;
+`
+
+const Header = styled.header`
   text-align: center;
 `
 
@@ -49,12 +97,33 @@ function App () {
   const [indexStart, indexEnd] = [page * perPage, (page + 1) * perPage]
   const viewItems = itemSource.slice(indexStart, indexEnd)
   const nPages = parseInt(itemSource.length / perPage)
+
+  const noSearchResults = !loading && viewItems.length === 0 && searchStr !== ''
+  const noItemsReceived = !loading && viewItems.length === 0 && searchStr === ''
   const handleSearch = (e) => setSearchStr(e.target.value)
+
+  const Pages = () =>
+    <NavBar>
+      {[...Array(nPages).keys()].map((_, i) => {
+        const isActive = i === page
+        const className = isActive
+          ? 'active'
+          : null
+        const display = i + 1
+        return (
+          <li
+            onClick={() => setPage(i)}
+            className={className}
+            key={i}
+          >{display}
+          </li>
+        )
+      })}
+    </NavBar>
+
   useEffect(() => {
-    const today = new Date()
-    const assetId = '' + today.getFullYear() + today.getMonth() + today.getDate()
     setLoading(true)
-    axios.get(`/assets/${assetId}.json`)
+    axios.get('/assets/latest.json')
       .then((res) => setItems(res.data))
       .finally(() => setLoading(false))
   }, [])
@@ -72,47 +141,31 @@ function App () {
   }, [searchStr, items])
   return (
     <Fill>
-      <header>
+      <Header>
         <h1>ASCOUT</h1>
-        <p>{searchStr}</p>
-      </header>
+        <Subtitle>Search engine for konkursauktioner</Subtitle>
+      </Header>
       <NavWrapper>
         <input placeholder='vad letar du efter?' onChange={handleSearch} />
-        <br />
-        <br />
-        <label htmlFor='perPage'>Per sida</label>
-        <select name='perPage'>
-          <option>50</option>
-        </select>
-        <NavBar>
-          {[...Array(nPages).keys()].map((_, i) => {
-            const isActive = i === page
-            const className = isActive
-              ? 'active'
-              : null
-            const display = i + 1
-            return (
-              <li
-                onClick={() => setPage(i)}
-                className={className}
-                key={i}
-              >{display}
-              </li>
-            )
-          })}
-        </NavBar>
+        <Pages />
       </NavWrapper>
-      <main>
+      <Content>
+        {noItemsReceived && <p>No items for today</p>}
+        {noSearchResults && <p>No matches</p>}
         {loading && <p>Loading items from auctions..</p>}
-        {viewItems.map((item, i) => (
-          <div key={i}>
-            <a href={item.link}>
-              <p>{item.title}</p>
-              <Thumbnail src={item.image} />
-            </a>
-          </div>
-        ))}
-      </main>
+        <Grid>
+          {viewItems.map((item, i) => (
+            <GridItem key={i}>
+              <Link href={item.link} target='_blank' rel='noopener noreferrer'>
+                <CropSquare src={item.image} />
+                <Description>{item.title}</Description>
+
+              </Link>
+            </GridItem>
+          ))}
+        </Grid>
+      </Content>
+      <Pages />
     </Fill>
   )
 }
