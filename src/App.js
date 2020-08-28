@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
+import { useKey } from 'react-use'
 
 const Fill = styled.div`
   display: flex;
@@ -120,6 +121,9 @@ function App () {
         )
       })}
     </NavBar>
+
+  useKey('ArrowLeft', () => setPage(page => page - 1))
+  useKey('ArrowRight', () => setPage(page => page + 1))
 
   useEffect(() => {
     setLoading(true)
