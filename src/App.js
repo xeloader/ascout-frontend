@@ -105,7 +105,7 @@ function App () {
   const itemSource = searchItems || items
   const [indexStart, indexEnd] = [page * perPage, (page + 1) * perPage]
   const viewItems = itemSource.slice(indexStart, indexEnd)
-  const nPages = parseInt(itemSource.length / perPage)
+  const nPages = Math.ceil(itemSource.length / perPage)
 
   const noSearchResults = !loading && viewItems.length === 0 && searchStr !== ''
   const noItemsReceived = !loading && viewItems.length === 0 && searchStr === ''
