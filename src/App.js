@@ -13,6 +13,18 @@ const Fill = styled.div`
   border: 5px solid black;
   align-items: center;
 `
+
+const Title = styled.h1`
+font-weight: normal;
+`
+const SearchInput = styled.input`
+  width: 80%;
+  padding: 1rem;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  color: red;
+  font-family: inherit;
+`
 const CropSquare = styled.div`
   position: relative;
   width: 100%;
@@ -49,8 +61,10 @@ const NavBar = styled.ul`
     cursor: pointer;
     color: blue;
     text-decoration: underline;
+    border-radius: 2px;
     &.active {
-      color: black;
+      background-color: black;
+      color: white;
     }
   }
 `
@@ -86,10 +100,16 @@ const GridItem = styled.div`
 
 const NavWrapper = styled.nav`
   text-align: center;
+  width: 100%;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  box-sizing: border-box;
 `
 
 const Subtitle = styled.p`
   color: gray;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 `
 
 const Header = styled.header`
@@ -161,12 +181,12 @@ function App () {
   return (
     <Fill>
       <Header>
-        <h1>ASCOUT</h1>
+        <Title>ASCOUT</Title>
         <Subtitle>Söker konkursauktioner på PSAuction, PNTrading, Budi, Units och NetAuktion. 🚀</Subtitle>
-        <UpdatedAt>Uppdaterad för {humanUpdatedAt} sen</UpdatedAt>
+        <UpdatedAt title={updatedAt}>Uppdaterad för {humanUpdatedAt} sen</UpdatedAt>
       </Header>
       <NavWrapper>
-        <input placeholder='vad letar du efter?' onChange={handleSearch} />
+        <SearchInput placeholder='vad letar du efter?' onChange={handleSearch} />
         <Pages />
       </NavWrapper>
       <Content>
