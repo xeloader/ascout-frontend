@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
 import { useKey } from 'react-use'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { sv } from 'date-fns/locale'
 
 const Fill = styled.div`
   display: flex;
@@ -147,20 +149,21 @@ function App () {
     setPage(0)
     if (searchStr !== '') {
       const searchResult = items.filter((item) => {
-        const title = item.title.toLowerCase()
-        return title.indexOf(searchStr.toLowerCase()) > -1
+        const haystackStr = JSON.stringify(item).toLowerCase()
+        return haystackStr.indexOf(searchStr.toLowerCase()) > -1
       })
       setSearchItems(searchResult)
     } else {
       setSearchItems(null)
     }
   }, [searchStr, items])
+  const humanUpdatedAt = updatedAt && formatDistanceToNow(new Date(updatedAt), { locale: sv })
   return (
     <Fill>
       <Header>
         <h1>ASCOUT</h1>
-        <Subtitle>Search engine for konkursauktioner</Subtitle>
-        <UpdatedAt>Last update: {updatedAt}</UpdatedAt>
+        <Subtitle>Söker konkursauktioner på PSAuction, PNTrading, Budi, Units och NetAuktion. 🚀</Subtitle>
+        <UpdatedAt>Uppdaterad för {humanUpdatedAt} sen</UpdatedAt>
       </Header>
       <NavWrapper>
         <input placeholder='vad letar du efter?' onChange={handleSearch} />
